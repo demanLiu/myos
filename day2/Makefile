@@ -26,7 +26,7 @@ IMAGES = kernel.img
 
 CFLAGS = -m32 -march=i386  \
 	 -fno-builtin -fno-stack-protector -fno-omit-frame-pointer \
-	 -Wall -Werror -Os 
+	 -Wall -Werror -Os  -fcommon
 ASFLAGS = -m32
 LDFLAGS = -m elf_i386
 
@@ -45,7 +45,7 @@ img: forTestKernel bootloader.bin
 	dd if=forTestKernel of=kernel.img~ seek=1 conv=notrunc 2>/dev/null
 	mv kernel.img~ kernel.img
 
-qemu: $(IMAGES) 
+qemu:  img
 	$(QEMU) $(IMAGES)
 
 clean:
