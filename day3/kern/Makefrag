@@ -28,9 +28,9 @@ KERN_SRCFILES :=	kern/entry.S \
 			kern/sched.c \
 			kern/syscall.c \
 			kern/kdebug.c \
-			../../lib/printfmt.c \
-			../../lib/readline.c \
-			../../lib/string.c
+			../lib/printfmt.c \
+			../lib/readline.c \
+			../lib/string.c
 
 # Only build files if they exist.
 KERN_SRCFILES := $(wildcard $(KERN_SRCFILES))
@@ -39,7 +39,7 @@ KERN_BINFILES :=
 
 KERN_OBJFILES := $(patsubst %.c, $(OBJDIR)/%.o, $(KERN_SRCFILES))
 KERN_OBJFILES := $(patsubst %.S, $(OBJDIR)/%.o, $(KERN_OBJFILES))
-KERN_OBJFILES := $(patsubst $(OBJDIR)/lib/%, $(OBJDIR)/kern/%, $(KERN_OBJFILES))
+KERN_OBJFILES := $(patsubst $(OBJDIR)/../lib/%, $(OBJDIR)/kern/%, $(KERN_OBJFILES))
 
 KERN_BINFILES := $(patsubst %, $(OBJDIR)/%, $(KERN_BINFILES))
 
@@ -54,7 +54,7 @@ $(OBJDIR)/kern/%.o: kern/%.S $(OBJDIR)/.vars.KERN_CFLAGS
 	@mkdir -p $(@D)
 	$(V)$(CC) -nostdinc $(KERN_CFLAGS) -c -o $@ $<
 
-$(OBJDIR)/kern/%.o: lib/%.c $(OBJDIR)/.vars.KERN_CFLAGS
+$(OBJDIR)/kern/%.o: ../lib/%.c $(OBJDIR)/.vars.KERN_CFLAGS
 	@echo + cc $<
 	@mkdir -p $(@D)
 	$(V)$(CC) -nostdinc $(KERN_CFLAGS) -c -o $@ $<
@@ -72,10 +72,10 @@ $(OBJDIR)/kern/kernel: $(KERN_OBJFILES) $(KERN_BINFILES) kern/kernel.ld \
 	$(V)$(NM) -n $@ > $@.sym
 
 # How to build the kernel disk image
-$(OBJDIR)/kern/kernel.img: $(OBJDIR)/kern/kernel $(OBJDIR)/boot/boot
+$(OBJDIR)/kern/kernel.img: $(OBJDIR)/kern/kernel  bootloader.bin
 	@echo + mk $@
 	$(V)dd if=/dev/zero of=$(OBJDIR)/kern/kernel.img~ count=10000 2>/dev/null
-	$(V)dd if=$(OBJDIR)/boot/boot of=$(OBJDIR)/kern/kernel.img~ conv=notrunc 2>/dev/null
+	$(V)dd if=bootloader.bin of=$(OBJDIR)/kern/kernel.img~ conv=notrunc 2>/dev/null
 	$(V)dd if=$(OBJDIR)/kern/kernel of=$(OBJDIR)/kern/kernel.img~ seek=1 conv=notrunc 2>/dev/null
 	$(V)mv $(OBJDIR)/kern/kernel.img~ $(OBJDIR)/kern/kernel.img
 
