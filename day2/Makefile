@@ -26,7 +26,7 @@ IMAGES = kernel.img
 
 CFLAGS = -m32 -march=i386  \
 	 -fno-builtin -fno-stack-protector -fno-omit-frame-pointer \
-	 -Wall -Werror -Os  -fcommon
+	 -Wall  -Os  -fcommon
 ASFLAGS = -m32
 LDFLAGS = -m elf_i386
 
